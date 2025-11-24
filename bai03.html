@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    #timer {
+      font-size: 60px;
+      font-weight: bold;
+      background-color: #fff;
+      padding: 30px 50px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+
+    /* Animation khi dưới 1 phút */
+    .warning {
+      color: red;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="timer">10:00</div>
+
+<script>
+  const timerElement = document.getElementById('timer');
+  let totalSeconds = 10 * 60; // 10 phút
+
+  // Hàm format MM:SS
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  }
+
+  // Update đồng hồ mỗi giây
+  const intervalId = setInterval(() => {
+    if (totalSeconds <= 0) {
+      clearInterval(intervalId); // Dừng interval để tránh memory leak
+      alert("Hết thời gian!");
+      return;
+    }
+
+    totalSeconds--;
+
+    // Nếu dưới 1 phút thêm animation
+    if (totalSeconds < 60) {
+      timerElement.classList.add('warning');
+    }
+
+    timerElement.textContent = formatTime(totalSeconds);
+  }, 1000);
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Đăng Ký</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+      margin: 0;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-group input {
+      margin-right: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007BFF;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .success {
+      color: green;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 500px) {
+      form {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <form id="registerForm">
+    <h2>Đăng ký</h2>
+    <div id="message" class="success"></div>
+
+    <div class="form-group">
+      <label for="name">Tên</label>
+      <input type="text" id="name" required>
+      <div class="error" id="nameError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" required>
+      <div class="error" id="emailError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Mật khẩu</label>
+      <input type="password" id="password" required>
+      <div class="error" id="passwordError"></div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <input type="checkbox" id="terms" required>
+      <label for="terms">Đồng ý điều khoản</label>
+      <div class="error" id="termsError"></div>
+    </div>
+
+    <button type="submit">Đăng ký</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // Ngăn form submit mặc định
+
+      // Lấy giá trị input
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const terms = document.getElementById('terms').checked;
+
+      let isValid = true;
+
+      // Reset error messages
+      document.getElementById('nameError').textContent = '';
+      document.getElementById('emailError').textContent = '';
+      document.getElementById('passwordError').textContent = '';
+      document.getElementById('termsError').textContent = '';
+      message.textContent = '';
+
+      // Validate tên
+      if (name.length < 2) {
+        document.getElementById('nameError').textContent = 'Tên phải ít nhất 2 ký tự';
+        isValid = false;
+      }
+
+      // Validate email
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        document.getElementById('emailError').textContent = 'Email không hợp lệ';
+        isValid = false;
+      }
+
+      // Validate password (ít nhất 8 ký tự, chữ hoa, chữ thường, số)
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!passwordPattern.test(password)) {
+        document.getElementById('passwordError').textContent = 'Mật khẩu phải ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số';
+        isValid = false;
+      }
+
+      // Validate checkbox
+      if (!terms) {
+        document.getElementById('termsError').textContent = 'Bạn phải đồng ý điều khoản';
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      // Lưu dữ liệu vào LocalStorage (lưu email và tên, mã hóa mật khẩu bằng btoa)
+      const user = {
+        name: name,
+        email: email,
+        password: btoa(password) // mã hóa cơ bản
+      };
+
+      // Lưu vào LocalStorage
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      users.push(user);
+      localStorage.setItem('users', JSON.stringify(users));
+
+      // Thông báo thành công
+      message.textContent = 'Đăng ký thành công!';
+      form.reset();
+    });
+  </script>
+
+</body>
+</html>
